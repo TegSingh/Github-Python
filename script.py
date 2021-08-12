@@ -4,18 +4,27 @@ import os
 import sys
 
 # Set the number of commit details to print
-COMMITS_TO_PRINT = 10
-
+COMMITS_TO_PRINT = 0
 
 def main(): 
-    try: 
-        Repo.clone_from('https://github.com/TegSingh/DjangoDelights', 'DjangoDelights')
-        print("Remote repository cloned successfully")
-    except: 
-        print("Couldn't clone repository")
+    # Read command line arguments
+    repo_remote = sys.argv[1]
+    repo_url = sys.argv[3]
+
+    if repo_remote == 'remote':
+        # Use github link
+        try: 
+            Repo.clone_from(repo_url, 'GitRepo')
+            print("Remote repository cloned successfully")
+        except: 
+            print("Couldn't clone repository")
+
+    # Get the number of commits to be printed
+    COMMITS_TO_PRINT = sys.argv[2]
+    
 
     try:
-        repo = Repo('DjangoDelights')
+        repo = Repo('GitRepo')
         print("Repo instance loaded sucessfully")
     except: 
         print("Could not load repository instance")
@@ -44,6 +53,10 @@ def main():
         print("Rows written sucessfully")
     except:
         print("Error writing to csv file")
+    
+    # Clean up
+    print("Cleaning up")
+    os.system('rm -rf GitRepo/')
     f.close()
 
 if __name__ == '__main__': 
