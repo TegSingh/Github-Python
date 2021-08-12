@@ -24,7 +24,7 @@ def main():
     
 
     try:
-        repo = Repo('GitRepo')
+        repo = Repo(repo_url)
         print("Repo instance loaded sucessfully")
     except: 
         print("Could not load repository instance")
