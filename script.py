@@ -1,12 +1,24 @@
 import csv
 from git import Repo
+import os
+import sys
+
+# Set the number of commit details to print
+COMMITS_TO_PRINT = 10
+
 
 def main(): 
     try: 
-        repo = Repo() 
-        print("Repo instance loaded successfully")
+        Repo.clone_from('https://github.com/TegSingh/DjangoDelights', 'DjangoDelights')
+        print("Remote repository cloned successfully")
     except: 
-        print("Couldn't load repo instance")
+        print("Couldn't clone repository")
+
+    try:
+        repo = Repo('DjangoDelights')
+        print("Repo instance loaded sucessfully")
+    except: 
+        print("Could not load repository instance")
 
     try: 
         f = open('commit_info.csv', 'w')
@@ -18,7 +30,7 @@ def main():
         writer = csv.writer(f)
         print("Writer created successfully")
     except: 
-        print("Error creating writer"),
+        print("Error creating writer")
 
     tableheader = ['name', 'age']
     data = [['Tegveer', 20], 
