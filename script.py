@@ -4,12 +4,21 @@ import os
 import sys
 
 # Set the number of commit details to print
-COMMITS_TO_PRINT = 0
+COMMITS_TO_PRINT = int(sys.argv[2])
+
+def print_commit(commit):
+    print("----------------------------------------------------------------------------")
+    print("Hash code: ", str(commit.hexsha))
+    print("Commit summary: ", commit.summary)
+    print("Author name: {} email: {}".format(commit.author.name, commit.author.email))
+    print("Datetime commit was authorized: ", str(commit.authored_datetime))
+    print(str("Commit Number: {} and Size: {}".format(commit.count(), commit.size)))
 
 def main(): 
     # Read command line arguments
     repo_remote = sys.argv[1]
     repo_url = sys.argv[3]
+    repo_branch = sys.argv[4]
 
     if repo_remote == 'remote':
         # Use github link
@@ -18,10 +27,6 @@ def main():
             print("Remote repository cloned successfully")
         except: 
             print("Couldn't clone repository")
-
-    # Get the number of commits to be printed
-    COMMITS_TO_PRINT = sys.argv[2]
-    
 
     try:
         repo = Repo(repo_url)
@@ -41,19 +46,24 @@ def main():
     except: 
         print("Error creating writer")
 
-    tableheader = ['name', 'age']
-    data = [['Tegveer', 20], 
-            ['Hello world', 21],
-            ['lorem', 23], 
-            ['ipsum', 19]]
-
+    tableheader = ['Summary', 'Hex code', 'Author Name', 'Author email', 'Date and Time', 'Commit number', 'Commit size']
+    
     try:
         writer.writerow(tableheader)
-        writer.writerows(data)
-        print("Rows written sucessfully")
+        print("Header written sucessfully")
     except:
         print("Error writing to csv file")
-    
+
+    # List all commits
+    commit_list = list(repo.iter_commits(repo_branch))
+    for i in range(0, COMMITS_TO_PRINT):
+        commit = commit_list[i]
+        # Print commits if need be
+        print_commit(commit)
+        commit_row = [commit.summary, commit.hexsha, commit.author.name, commit.author.email, commit.authored_datetime, commit.count(), commit.size]
+        writer.writerow(commit_row)
+   
+    print("----------------------------------------------------------------------------")
     # Clean up
     print("Cleaning up")
     os.system('rm -rf GitRepo/')
