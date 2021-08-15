@@ -11,8 +11,15 @@ def print_commit(commit):
     print("Hash code: ", str(commit.hexsha))
     print("Commit summary: ", commit.summary)
     print("Author name: {} email: {}".format(commit.author.name, commit.author.email))
+    print("Parents: ", commit.parents)
     print("Datetime commit was authorized: ", str(commit.authored_datetime))
+    message = commit.message.split('\n')
+    if len(message) == 3:
+        print("Commit Message: ", message[2])
+    else: 
+        print("Commit Message: ", message[0])
     print(str("Commit Number: {} and Size: {}".format(commit.count(), commit.size)))
+    print("Number of Files changed: ", len(commit.stats.files.keys()))
 
 def main(): 
     # Read command line arguments
@@ -46,7 +53,7 @@ def main():
     except: 
         print("Error creating writer")
 
-    tableheader = ['Summary', 'Hex code', 'Author Name', 'Author email', 'Date and Time', 'Commit number', 'Commit size']
+    tableheader = ['Summary', 'Hex code', 'Author Name', 'Author email', 'Parents', 'Date and Time', 'Message', 'Commit number', 'Commit size', "#Files changed"]
     
     try:
         writer.writerow(tableheader)
@@ -60,7 +67,12 @@ def main():
         commit = commit_list[i]
         # Print commits if need be
         print_commit(commit)
-        commit_row = [commit.summary, commit.hexsha, commit.author.name, commit.author.email, commit.authored_datetime, commit.count(), commit.size]
+        message = commit.message.split('\n')
+        if len(message) == 3:
+            result = message[2]
+        else: 
+            result = message[0]
+        commit_row = [commit.summary, commit.hexsha, commit.author.name, commit.author.email, commit.parents, commit.authored_datetime, result, commit.count(), commit.size, len(commit.stats.files.keys())]
         writer.writerow(commit_row)
    
     print("----------------------------------------------------------------------------")
