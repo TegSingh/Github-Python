@@ -4,8 +4,12 @@ import os
 import sys
 
 # Set the number of commit details to print
-COMMITS_TO_PRINT = int(sys.argv[2])
+NUMBER_OF_COMMITS = int(sys.argv[2])
+# Keys: File names, Values: number of authors that contributed to the file
+file_dict = {}
+    
 
+# Method to print information about the commit
 def print_commit(commit):
     print("----------------------------------------------------------------------------")
     print("Hash code: ", str(commit.hexsha))
@@ -21,6 +25,42 @@ def print_commit(commit):
     print(str("Commit Number: {} and Size: {}".format(commit.count(), commit.size)))
     print("Number of Files changed: ", len(commit.stats.files.keys()))
 
+
+# Method to initialize the file_dictionary
+def initCommitsPerFile(commit_list, n):    
+    file_info = commit.stats.files
+    for key in file_info.keys():
+        if file_dict[key] is None:
+            file_dict[key] = 0
+        
+# Method to calculate the number of authors that contributed to a file
+def calculateCommitsPerFile(commit):        
+    file_info = commit.stats.files
+    # Increase the value for each file
+    for key in file_info.keys():
+        file_dict[key] += 1
+
+# Method to calculate all the line changes made in one commit in all files
+def calculateFileChanges(commit):
+    file_keys = commit.stats.files.keys()
+    file_info = commit.stats.files
+    total_insertions = 0
+    total_deletions = 0
+    total_lines_changed = 0
+
+    for key in file_keys:        
+        changes_list = file_info[key]
+        for i in changes_list.keys():
+            if i == 'insertions':
+                total_insertions += changes_list[i] 
+            if i == 'deletions':
+                total_deletions += changes_list[i]
+            if i == 'lines':
+                total_lines_changed += changes_list[i]
+        
+    return total_insertions, total_deletions, total_lines_changed
+
+# Main method
 def main(): 
     # Read command line arguments
     repo_remote = sys.argv[1]
@@ -42,7 +82,7 @@ def main():
         print("Could not load repository instance")
 
     try: 
-        f = open('commit_info.csv', 'w')
+        f = open('Results/commit_info.csv', 'w')
         print("File opened successfully")
     except: 
         print("Error opening file")
@@ -53,7 +93,7 @@ def main():
     except: 
         print("Error creating writer")
 
-    tableheader = ['Summary', 'Hex code', 'Author Name', 'Author email', 'Parents', 'Date and Time', 'Message', 'Commit number', 'Commit size', "#Files changed"]
+    tableheader = ['Summary', 'Hex code', 'Author Name', 'Author email', 'Parents', 'Date and Time', 'Message', 'Commit number', 'Commit size', "#Files changed", '#Lines Inserted', '#Lines Deleted', '#Lines Changed']
     
     try:
         writer.writerow(tableheader)
@@ -63,19 +103,29 @@ def main():
 
     # List all commits
     commit_list = list(repo.iter_commits(repo_branch))
-    for i in range(0, COMMITS_TO_PRINT):
+    # Initialize the number of commits per file
+    #initCommitsPerFile(commit_list, NUMBER_OF_COMMITS)
+    
+    for i in range(0, NUMBER_OF_COMMITS):
         commit = commit_list[i]
-        # Print commits if need be
         print_commit(commit)
+        # Changes on Files
+        total_insertions, total_deletions, total_lines_changed = calculateFileChanges(commit)
+        # Commits of messages
         message = commit.message.split('\n')
         if len(message) == 3:
             result = message[2]
         else: 
             result = message[0]
-        commit_row = [commit.summary, commit.hexsha, commit.author.name, commit.author.email, commit.parents, commit.authored_datetime, result, commit.count(), commit.size, len(commit.stats.files.keys())]
+        # Calculate the number of commits per file
+        # calculateCommitsPerFile(commit)
+
+        # Write to CSV file
+        commit_row = [commit.summary, commit.hexsha, commit.author.name, commit.author.email, commit.parents, commit.authored_datetime, result, commit.count(), commit.size, len(commit.stats.files.keys()), total_insertions, total_deletions, total_lines_changed]
         writer.writerow(commit_row)
    
     print("----------------------------------------------------------------------------")
+    
     # Clean up
     print("Cleaning up")
     os.system('rm -rf GitRepo/')
