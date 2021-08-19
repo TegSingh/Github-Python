@@ -123,9 +123,9 @@ def main():
     # List all commits
     commit_list = list(repo.iter_commits(repo_branch))
     # Initialize the number of commits per file
-    initCommitsPerFile(commit_list, NUMBER_OF_COMMITS)
+    initCommitsPerFile(commit_list, len(commit_list))
     
-    for i in range(0, NUMBER_OF_COMMITS):
+    for i in range(len(commit_list)):
         commit = commit_list[i]
         # print_commit(commit)
         # Changes on Files
