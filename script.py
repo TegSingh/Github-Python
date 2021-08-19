@@ -25,13 +25,20 @@ def print_commit(commit):
     print(str("Commit Number: {} and Size: {}".format(commit.count(), commit.size)))
     print("Number of Files changed: ", len(commit.stats.files.keys()))
 
+# Method to print file_dict dictionary
+def print_file_dict():
+    for key in file_dict.keys():
+        print('Number of commits for file ', key, ': ', file_dict[key])
+    print(len(file_dict.keys()))
 
 # Method to initialize the file_dictionary
 def initCommitsPerFile(commit_list, n):    
-    file_info = commit.stats.files
-    for key in file_info.keys():
-        if file_dict[key] is None:
+    for i in range(0, n):
+        commit = commit_list[i]
+        file_info = commit.stats.files
+        for key in file_info.keys():
             file_dict[key] = 0
+            # print('key: ', key, ', value: ', file_dict[key])
         
 # Method to calculate the number of authors that contributed to a file
 def calculateCommitsPerFile(commit):        
@@ -39,6 +46,8 @@ def calculateCommitsPerFile(commit):
     # Increase the value for each file
     for key in file_info.keys():
         file_dict[key] += 1
+        # print('key: ', key, ', value: ', file_dict[key])
+
 
 # Method to calculate all the line changes made in one commit in all files
 def calculateFileChanges(commit):
@@ -59,6 +68,16 @@ def calculateFileChanges(commit):
                 total_lines_changed += changes_list[i]
         
     return total_insertions, total_deletions, total_lines_changed
+
+# Method to write file dictionary containing commits per file to a csv
+def write_file_dict_to_csv(): 
+    f = open('Results/file_info.csv', 'w')
+    writer = csv.writer(f)
+    table_header = ['File Name and Path', 'Number of commits']
+    writer.writerow(table_header)
+    for key in file_dict.keys():
+        row = [key, file_dict[key]]
+        writer.writerow(row)
 
 # Main method
 def main(): 
@@ -104,11 +123,11 @@ def main():
     # List all commits
     commit_list = list(repo.iter_commits(repo_branch))
     # Initialize the number of commits per file
-    #initCommitsPerFile(commit_list, NUMBER_OF_COMMITS)
+    initCommitsPerFile(commit_list, NUMBER_OF_COMMITS)
     
     for i in range(0, NUMBER_OF_COMMITS):
         commit = commit_list[i]
-        print_commit(commit)
+        # print_commit(commit)
         # Changes on Files
         total_insertions, total_deletions, total_lines_changed = calculateFileChanges(commit)
         # Commits of messages
@@ -118,14 +137,19 @@ def main():
         else: 
             result = message[0]
         # Calculate the number of commits per file
-        # calculateCommitsPerFile(commit)
+        calculateCommitsPerFile(commit)
 
         # Write to CSV file
         commit_row = [commit.summary, commit.hexsha, commit.author.name, commit.author.email, commit.parents, commit.authored_datetime, result, commit.count(), commit.size, len(commit.stats.files.keys()), total_insertions, total_deletions, total_lines_changed]
         writer.writerow(commit_row)
-   
+        
     print("----------------------------------------------------------------------------")
     
+    # Write file_dict to csv file and print that information
+    print("Writing Number of commits per file to csv file")
+    # print_file_dict()
+    write_file_dict_to_csv()
+
     # Clean up
     print("Cleaning up")
     os.system('rm -rf GitRepo/')
