@@ -7,9 +7,16 @@ import sys
 NUMBER_OF_COMMITS = int(sys.argv[2])
 
 author_dict = {}
+author_list = []
+
+# Method to initialize author dictionary
+def init_author_dict():
+    for author in author_list:
+        author_dict[author] = 0
 
 def update_author_dict(commit):
     author_dict[commit.author.name] += 1
+
 
 # Main method
 def main(): 
@@ -52,16 +59,35 @@ def main():
     except:
         print("Error writing to csv file")
 
+    # Read author names and store them in an array
+    try: 
+        with open('Results/Author_info/author_name_list.txt', 'r') as f:
+            for author in f:
+                # Remove the eol character
+                author = author.replace('\n', '')
+                # Add to list
+                author_list.append(author)
+    except:
+        print("Error loading author file")
+
+    print(author_list)
     # List all commits
     commit_list = list(repo.iter_commits(repo_branch))
     
+    # initialize author dictionary
+    init_author_dict()
+
     for i in range(len(commit_list)):
         commit = commit_list[i]
+        # Update author dictionary after every discovered commit
         update_author_dict(commit)
-        # Write to CSV file
-        author_row = [author_name, author_email, first_commit_hex, first_commit_time, last_commit_hex, last_commit_time, frequency, activity_time]
-        writer.writerow(author_row)
         
+        # Write to CSV file
+        # author_row = [author_name, author_email, first_commit_hex, first_commit_time, last_commit_hex, last_commit_time, frequency, activity_time]
+        # writer.writerow(author_row)
+
+    print(author_dict)
+
     print("----------------------------------------------------------------------------")
     
     # Clean up

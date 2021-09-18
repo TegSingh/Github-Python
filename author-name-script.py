@@ -17,13 +17,11 @@ def main():
         # Use github link
         try: 
             Repo.clone_from(repo_url, 'GitRepo')
-            print("Remote repository cloned successfully")
         except: 
             print("Couldn't clone repository")
 
     try:
         repo = Repo(repo_url)
-        print("Repo instance loaded sucessfully")
     except: 
         print("Could not load repository instance")
 
