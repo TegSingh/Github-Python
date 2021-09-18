@@ -46,7 +46,7 @@ def calculateCommitsPerFile(commit):
     # Increase the value for each file
     for key in file_info.keys():
         file_dict[key] += 1
-        # print('key: ', key, ', value: ', file_dict[key])
+        print('key: ', key, ', value: ', file_dict[key])
 
 
 # Method to calculate all the line changes made in one commit in all files
@@ -71,7 +71,7 @@ def calculateFileChanges(commit):
 
 # Method to write file dictionary containing commits per file to a csv
 def write_file_dict_to_csv(): 
-    f = open('Results/file_info.csv', 'w')
+    f = open('Results/File_info/file_info.csv', 'w')
     writer = csv.writer(f)
     table_header = ['File Name and Path', 'Number of commits']
     writer.writerow(table_header)
@@ -101,7 +101,7 @@ def main():
         print("Could not load repository instance")
 
     try: 
-        f = open('Results/commit_info.csv', 'w')
+        f = open('Results/Commit_info/commit_info.csv', 'w')
         print("File opened successfully")
     except: 
         print("Error opening file")
@@ -123,9 +123,9 @@ def main():
     # List all commits
     commit_list = list(repo.iter_commits(repo_branch))
     # Initialize the number of commits per file
-    initCommitsPerFile(commit_list, len(commit_list))
+    initCommitsPerFile(commit_list, NUMBER_OF_COMMITS)
     
-    for i in range(len(commit_list)):
+    for i in range(0, NUMBER_OF_COMMITS):
         commit = commit_list[i]
         # print_commit(commit)
         # Changes on Files
