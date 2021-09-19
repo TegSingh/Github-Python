@@ -6,18 +6,40 @@ import sys
 # Set the number of commit details to print
 NUMBER_OF_COMMITS = int(sys.argv[2])
 
+# Dictionary of Dictionaries
 author_dict = {}
 author_list = []
 
 # Method to initialize author dictionary
 def init_author_dict():
     for author in author_list:
-        author_dict[author] = 0
-
+        author_dict[author] = {"number_of_commits": 0, "first_commit_hex": "", "first_commit_time": "", "last_commit_hex": "", "last_commit_time": "", "frequency": 0.0, "time_of_most_activity": ""}
+    
 def update_author_dict(commit):
-    author_dict[commit.author.name] += 1
+    author_dict[commit.author.name]["number_of_commits"] += 1
+    
 
+    # set initial values for the first commit
+    if author_dict[commit.author.name]["first_commit_time"] == "":
+        author_dict[commit.author.name]["first_commit_hex"] = commit.hexsha
+        author_dict[commit.author.name]["first_commit_time"] = commit.authored_datetime
+    
+    # set initial values for the last commit
+    if author_dict[commit.author.name]["last_commit_time"] == "":
+        author_dict[commit.author.name]["last_commit_hex"] = commit.hexsha
+        author_dict[commit.author.name]["last_commit_time"] = commit.authored_datetime
+    
 
+    # update the first commit values
+    if commit.authored_datetime < author_dict[commit.author.name]["first_commit_time"]:
+        author_dict[commit.author.name]["first_commit_hex"] = commit.hexsha
+        author_dict[commit.author.name]["first_commit_time"] = commit.authored_datetime
+    
+    # update the last commit values
+    if commit.authored_datetime > author_dict[commit.author.name]["last_commit_time"]:
+        author_dict[commit.author.name]["last_commit_hex"] = commit.hexsha
+        author_dict[commit.author.name]["last_commit_time"] = commit.authored_datetime
+    
 # Main method
 def main(): 
     # Read command line arguments
@@ -82,12 +104,28 @@ def main():
         # Update author dictionary after every discovered commit
         update_author_dict(commit)
         
-        # Write to CSV file
-        # author_row = [author_name, author_email, first_commit_hex, first_commit_time, last_commit_hex, last_commit_time, frequency, activity_time]
-        # writer.writerow(author_row)
+    # Write to CSV file
+    for key, value in author_dict.items():
+        author_row = [
+            key, 
+            author_dict[key]["number_of_commits"],  
+            author_dict[key]["first_commit_hex"], 
+            author_dict[key]["first_commit_time"], 
+            author_dict[key]["last_commit_hex"], 
+            author_dict[key]["last_commit_time"], 
+            author_dict[key]["frequency"], 
+            author_dict[key]["time_of_most_activity"]
+        ]
+        writer.writerow(author_row)
 
-    print(author_dict)
-
+    # print(author_dict)
+    
+    # Calculate the number of commits and confirm
+    sum = 0
+    for key in author_dict: 
+        sum += author_dict[key]["number_of_commits"]
+    print(sum)
+    
     print("----------------------------------------------------------------------------")
     
     # Clean up
