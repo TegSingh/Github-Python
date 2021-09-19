@@ -38,16 +38,15 @@ def initCommitsPerFile(commit_list, n):
         file_info = commit.stats.files
         for key in file_info.keys():
             file_dict[key] = 0
-            # print('key: ', key, ', value: ', file_dict[key])
         
 # Method to calculate the number of authors that contributed to a file
 def calculateCommitsPerFile(commit):        
     file_info = commit.stats.files
+
     # Increase the value for each file
     for key in file_info.keys():
         file_dict[key] += 1
         print('key: ', key, ', value: ', file_dict[key])
-
 
 # Method to calculate all the line changes made in one commit in all files
 def calculateFileChanges(commit):
@@ -75,6 +74,7 @@ def write_file_dict_to_csv():
     writer = csv.writer(f)
     table_header = ['File Name and Path', 'Number of commits']
     writer.writerow(table_header)
+
     for key in file_dict.keys():
         row = [key, file_dict[key]]
         writer.writerow(row)
