@@ -36,7 +36,3 @@ The results are stored inside the Results directory
 2. **File_info:** This file contains information about number of commits per file
    **NOTE:** These results are dependent on the number of commits provide as command line argument.
 3. **Author_name_list:** This file contains the list of the authors/contributors of a project or git repo
-
-```
-
-```
