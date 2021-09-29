@@ -140,6 +140,7 @@ def main():
         calculate_author_commit_frequency(key)
 
     # Write to CSV file
+    # 0-4, 4-8
     for key, value in author_dict.items():
         author_row = [
             key, 

@@ -1,0 +1,7 @@
+Personal Access Token: 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
+
+- Helpful open-liberty links: 
+curl -i https://api.github.com/repos/OpenLiberty/open-liberty >> openlibertyrepo.json
+
+- List the contributors to open-liberty repository:
+curl -i -u TegSingh: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 https://api.github.com/repos/OpenLiberty/open-liberty/contributors >> openlibertyauthors.json
