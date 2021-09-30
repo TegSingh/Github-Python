@@ -28,6 +28,12 @@ python3 author-name-script.py remote_flag number_of_commits optional_repository_
 python3 author-script.py remote_flag number_of_commits optional_repository_link repository_branch
 ```
 
+### Run API GET commands
+
+```
+python3 github-api.py link_to_repo_API username personal_access_token
+```
+
 ## Results
 
 The results are stored inside the Results directory
@@ -36,3 +42,5 @@ The results are stored inside the Results directory
 2. **File_info:** This file contains information about number of commits per file
    **NOTE:** These results are dependent on the number of commits provide as command line argument.
 3. **Author_name_list:** This file contains the list of the authors/contributors of a project or git repo
+4. **Author_info.json:** This file contains links and contributions for individual authors
+5. **Repo_info.json:** This file contains links to the API we can access to get information about authors, collaborators, commits, etc
