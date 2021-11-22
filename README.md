@@ -5,6 +5,11 @@ This program helps in reading commit details and file strucutre of Open source c
 
 ## Instructions
 
+Activate the virtual environment
+```bash
+Source ./gitpy/bin/activate
+```
+
 ### List the commit information
 
 ```bash
